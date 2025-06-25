@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#005792">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Class 11A PPT Sharing Portal</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       margin: 0;
       padding: 0;
       background: linear-gradient(to right, #f0f2f5, #e0f7fa);
@@ -22,37 +28,44 @@
       padding: 1rem;
       text-align: center;
       position: relative;
+      animation: fadeInDown 1s ease;
     }
     body.dark header {
       background: linear-gradient(to right, #1e1e1e, #333333);
     }
     main {
-      padding: 2rem;
+      padding: 1.5rem;
+      animation: fadeInUp 1s ease;
     }
     details {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       background-color: white;
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+    details:hover {
+      transform: scale(1.02);
     }
     body.dark details {
       background-color: #1e1e1e;
     }
     summary {
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: bold;
       color: #003f5c;
       cursor: pointer;
       display: flex;
       align-items: center;
+      transition: color 0.3s;
     }
     body.dark summary {
       color: #90caf9;
     }
     summary img {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       margin-right: 10px;
     }
     ul {
@@ -62,10 +75,15 @@
     }
     li {
       margin: 0.5rem 0;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+      animation-delay: 0.3s;
     }
     a {
       text-decoration: none;
       color: #005792;
+      transition: color 0.3s;
+      word-wrap: break-word;
     }
     body.dark a {
       color: #90caf9;
@@ -124,6 +142,32 @@
       content: "🌙";
       transform: translateX(30px);
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 600px) {
+      main {
+        padding: 1rem;
+      }
+      summary {
+        font-size: 0.95rem;
+      }
+      .toggle-container {
+        top: 5px;
+        right: 5px;
+        transform: scale(0.9);
+      }
+    }
   </style>
 </head>
 <body>
@@ -142,28 +186,23 @@
       <summary><img src="https://img.icons8.com/doodle/48/physics.png" alt="Physics"> Physics</summary>
       <ul id="physics-list"></ul>
     </details>
-
     <details>
       <summary><img src="https://img.icons8.com/doodle/48/chemistry.png" alt="Chemistry"> Chemistry</summary>
       <ul id="chemistry-list"></ul>
     </details>
-
     <details>
       <summary><img src="https://img.icons8.com/doodle/48/math.png" alt="Maths"> Mathematics</summary>
       <ul id="math-list"></ul>
     </details>
-
     <details>
       <summary><img src="https://img.icons8.com/doodle/48/laptop-coding.png" alt="CS"> Computer Science</summary>
       <ul id="cs-list"></ul>
     </details>
-
     <details>
       <summary><img src="https://img.icons8.com/doodle/48/book-shelf.png" alt="English"> English</summary>
       <ul id="english-list"></ul>
     </details>
   </main>
-
   <script>
     const folderId = "1YPr1oX6qz80TRTdSKTSdmtaMUUKfuhI7";
     const apiKey = "AIzaSyB6svQmnmyUojMt5ndeK-nNnyv1sbHJF6w";
@@ -194,6 +233,7 @@
                 const a = document.createElement("a");
                 a.href = `https://drive.google.com/file/d/${file.id}/view`;
                 a.textContent = file.name;
+                a.target = "_blank";
                 li.appendChild(a);
                 ul.appendChild(li);
                 break;
@@ -204,9 +244,7 @@
       })
       .catch(err => console.error("Error fetching files:", err));
 
-    // Dark mode toggle
-    const toggle = document.getElementById("theme-toggle");
-    toggle.addEventListener("change", () => {
+    document.getElementById("theme-toggle").addEventListener("change", () => {
       document.body.classList.toggle("dark");
     });
   </script>
