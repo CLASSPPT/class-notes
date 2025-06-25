@@ -11,17 +11,32 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f4f8;
       display: flex;
       height: 100vh;
       overflow: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+    :root {
+      --bg: #f4f4f8;
+      --text: #000;
+      --panel: #ffffff;
+      --hover: #e0e0e0;
+      --active: #d0ebff;
+    }
+    .dark {
+      --bg: #121212;
+      --text: #eee;
+      --panel: #1e1e1e;
+      --hover: #333;
+      --active: #2d4f7c;
     }
     aside {
       width: 300px;
-      background-color: #ffffff;
+      background-color: var(--panel);
       padding: 20px;
       overflow-y: auto;
-      border-right: 1px solid #ddd;
+      border-right: 1px solid #ccc;
     }
     main {
       flex-grow: 1;
@@ -30,28 +45,30 @@
       flex-direction: column;
       align-items: center;
     }
-    h1 {
-      font-size: 22px;
-      margin-bottom: 15px;
-    }
-    ul#ppt-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    ul#ppt-list li {
+    h1, h2 {
+      font-size: 20px;
       margin-bottom: 10px;
     }
-    ul#ppt-list a {
+    .class-section {
+      margin-bottom: 20px;
+    }
+    ul.ppt-list {
+      list-style: none;
+      padding: 0;
+    }
+    ul.ppt-list li {
+      margin-bottom: 6px;
+    }
+    ul.ppt-list a {
       text-decoration: none;
-      color: #333;
-      padding: 8px 12px;
+      color: var(--text);
+      padding: 6px 10px;
       display: block;
       border-radius: 5px;
       transition: background-color 0.3s;
     }
-    ul#ppt-list a:hover {
-      background-color: #e0e0e0;
+    ul.ppt-list a:hover {
+      background-color: var(--hover);
     }
     iframe {
       width: 100%;
@@ -59,14 +76,35 @@
       max-height: 90vh;
       border: 1px solid #ccc;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .dark-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: 1px solid var(--text);
+      color: var(--text);
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
+  <button class="dark-toggle" onclick="document.body.classList.toggle('dark')">🌙 Toggle Dark Mode</button>
   <aside>
-    <h1>📂 Class PPTs</h1>
-    <ul id="ppt-list"></ul>
+    <h1>📘 Class PPTs</h1>
+
+    <div class="class-section">
+      <h2>11A</h2>
+      <ul class="ppt-list" id="class-11A-subjects"></ul>
+    </div>
+
+    <div class="class-section">
+      <h2>11B</h2>
+      <ul class="ppt-list" id="class-11B-subjects"></ul>
+    </div>
   </aside>
 
   <main>
@@ -74,42 +112,61 @@
   </main>
 
   <script>
-    const folderId = "1YPr1oX6qz80TRTdSKTSdmtaMUUKfuhI7"; // Your folder ID
-    const apiKey = "AIzaSyB6svQmnmyUojMt5ndeK-nNnyv1sbHJF6w"; // Your Google API key
+    const subjects = {
+      "11A": ["Physics", "Chemistry", "Mathematics", "Computer Science", "English"],
+      "11B": ["Physics", "Chemistry", "Biology", "English", "Hindi"]
+    };
 
+    const folderId = "1YPr1oX6qz80TRTdSKTSdmtaMUUKfuhI7"; // Folder ID
+    const apiKey = "AIzaSyB6svQmnmyUojMt5ndeK-nNnyv1sbHJF6w"; // API Key
     const query = `'${folderId}' in parents and trashed = false`;
     const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&key=${apiKey}`;
 
     fetch(url)
       .then(res => res.json())
       .then(data => {
-        const list = document.getElementById("ppt-list");
         const preview = document.getElementById("ppt-preview");
 
         if (data.files.length === 0) {
-          list.innerHTML = "<li>No PPT files found.</li>";
+          document.querySelectorAll('.ppt-list').forEach(list => list.innerHTML = "<li>No files found</li>");
           return;
         }
 
-        data.files.forEach((file, index) => {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = "#";
-          a.innerText = file.name;
-          a.onclick = () => {
-            preview.src = `https://drive.google.com/file/d/${file.id}/preview`;
-            document.querySelectorAll('#ppt-list a').forEach(el => el.style.backgroundColor = '');
-            a.style.backgroundColor = '#d0ebff';
-            return false;
-          };
-          li.appendChild(a);
-          list.appendChild(li);
+        const fileGroups = {
+          "11A": {},
+          "11B": {}
+        };
 
-          // Auto load first PPT
-          if (index === 0) {
-            preview.src = `https://drive.google.com/file/d/${file.id}/preview`;
-            a.style.backgroundColor = '#d0ebff';
+        data.files.forEach(file => {
+          const lowerName = file.name.toLowerCase();
+          if (subjects["11A"].some(sub => lowerName.includes(sub.toLowerCase()))) {
+            fileGroups["11A"][file.name] = file.id;
+          } else if (subjects["11B"].some(sub => lowerName.includes(sub.toLowerCase()))) {
+            fileGroups["11B"][file.name] = file.id;
           }
+        });
+
+        Object.keys(fileGroups).forEach(cls => {
+          const ul = document.getElementById(`class-${cls}-subjects`);
+          Object.entries(fileGroups[cls]).forEach(([name, id], i) => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = "#";
+            a.innerText = name;
+            a.onclick = () => {
+              preview.src = `https://drive.google.com/file/d/${id}/preview`;
+              document.querySelectorAll('.ppt-list a').forEach(el => el.style.backgroundColor = '');
+              a.style.backgroundColor = 'var(--active)';
+              return false;
+            };
+            li.appendChild(a);
+            ul.appendChild(li);
+
+            if (i === 0 && preview.src === "") {
+              preview.src = `https://drive.google.com/file/d/${id}/preview`;
+              a.style.backgroundColor = 'var(--active)';
+            }
+          });
         });
       })
       .catch(err => {
@@ -118,4 +175,5 @@
   </script>
 </body>
 </html>
+
 
