@@ -176,10 +176,112 @@
     <div class="toggle-container">
       <span>Dark Mode</span>
       <label class="switch">
-        <input type="checkbox" onclick="toggleDarkMode(this)">
+        <input type="checkbox" onclick="document.body.classList.toggle('dark')">
         <span class="slider"></span>
       </label>
     </div>
   </header>
   <div class="content">
-    <!-- rest of content stays the same -->
+    <aside>
+      <div class="search-box">
+        <input type="text" placeholder="Search PPTs..." id="searchInput" oninput="filterPPTs()">
+      </div>
+      <div class="class-section">
+        <h2>11A</h2>
+        <ul class="ppt-list" id="class-11A-subjects"></ul>
+      </div>
+      <div class="class-section">
+        <h2>11B</h2>
+        <ul class="ppt-list" id="class-11B-subjects"></ul>
+      </div>
+    </aside>
+    <main>
+      <iframe id="ppt-preview" src="" allowfullscreen></iframe>
+    </main>
+  </div>
+  <script>
+    const subjectIcons = {
+      "Physics": "🔭",
+      "Chemistry": "🧪",
+      "Mathematics": "➗",
+      "Computer Science": "💻",
+      "English": "📘",
+      "Biology": "🧬",
+      "Hindi": "📚"
+    };
+
+    const subjects = {
+      "11A": ["Physics", "Chemistry", "Mathematics", "Computer Science", "English"],
+      "11B": ["Physics", "Chemistry", "Biology", "English", "Hindi"]
+    };
+
+    const folderId = "1YPr1oX6qz80TRTdSKTSdmtaMUUKfuhI7";
+    const apiKey = "AIzaSyB6svQmnmyUojMt5ndeK-nNnyv1sbHJF6w";
+    const query = `'${folderId}' in parents and trashed = false`;
+    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&key=${apiKey}`;
+
+    let allLinks = [];
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const preview = document.getElementById("ppt-preview");
+
+        if (!data.files || data.files.length === 0) {
+          document.querySelectorAll('.ppt-list').forEach(list => list.innerHTML = "<li>No files found</li>");
+          return;
+        }
+
+        const fileGroups = { "11A": {}, "11B": {} };
+
+        data.files.forEach(file => {
+          const lowerName = file.name.toLowerCase();
+          Object.entries(subjects).forEach(([cls, list]) => {
+            list.forEach(subject => {
+              if (lowerName.includes(subject.toLowerCase())) {
+                fileGroups[cls][file.name] = file.id;
+              }
+            });
+          });
+        });
+
+        Object.entries(fileGroups).forEach(([cls, files]) => {
+          const ul = document.getElementById(`class-${cls}-subjects`);
+          Object.entries(files).forEach(([name, id], i) => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            const matchedSubject = subjects[cls].find(sub => name.toLowerCase().includes(sub.toLowerCase()));
+            a.innerHTML = `<span class='icon'>${subjectIcons[matchedSubject] || "📄"}</span> ${name}`;
+            a.href = "#";
+            a.setAttribute("data-name", name.toLowerCase());
+            a.onclick = () => {
+              preview.src = `https://drive.google.com/file/d/${id}/preview`;
+              document.querySelectorAll('.ppt-list a').forEach(el => el.style.backgroundColor = '');
+              a.style.backgroundColor = 'var(--active)';
+              return false;
+            };
+            li.appendChild(a);
+            ul.appendChild(li);
+            allLinks.push(a);
+
+            if (i === 0 && preview.src === "") {
+              preview.src = `https://drive.google.com/file/d/${id}/preview`;
+              a.style.backgroundColor = 'var(--active)';
+            }
+          });
+        });
+      })
+      .catch(err => {
+        document.body.innerHTML += `<p>Error loading files: ${err.message}</p>`;
+      });
+
+    function filterPPTs() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      allLinks.forEach(link => {
+        const match = link.getAttribute("data-name").includes(input);
+        link.parentElement.style.display = match ? "flex" : "none";
+      });
+    }
+  </script>
+</body>
+</html>
