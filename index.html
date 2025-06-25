@@ -20,20 +20,30 @@
     main {
       padding: 2rem;
     }
-    section {
-      margin-bottom: 3rem;
+    details {
+      margin-bottom: 1.5rem;
       background-color: white;
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    h2 {
+    summary {
+      font-size: 1.2rem;
+      font-weight: bold;
       color: #003f5c;
-      margin-bottom: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    summary img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
     }
     ul {
       list-style-type: none;
       padding-left: 0;
+      margin-top: 1rem;
     }
     li {
       margin: 0.5rem 0;
@@ -50,17 +60,49 @@
 <body>
   <header>
     <h1>📚 Class 11A PPT Sharing Portal</h1>
-    <p>Access all class presentations easily</p>
+    <p>Access all class presentations by subject</p>
   </header>
   <main>
-    <section>
-      <h2>Class 11A - Subject Materials</h2>
+    <details>
+      <summary><img src="https://img.icons8.com/color/48/physics.png" alt="Physics"> Physics</summary>
       <ul>
-        <li><a href="https://drive.google.com/file/d/1r8uQLuh3Nlv8g9Yv7QBoH6xgZpbp0wbP/view" target="_blank">Chapter 1 - Motion.pptx</a></li>
-        <li><a href="https://drive.google.com/file/d/1t_KoRDTGQbZLgRfE6cwGgOG-fj3AdUCo/view" target="_blank">Chapter 2 - Force and Laws of Motion.pptx</a></li>
-        <li><a href="https://drive.google.com/file/d/1x4gWSU64v2oXlCmFo_6_mnMboJS2FZ8Y/view" target="_blank">Chapter 3 - Gravitation.pptx</a></li>
+        <li><a href="https://drive.google.com/file/d/1r8uQLuh3Nlv8g9Yv7QBoH6xgZpbp0wbP/view" target="_blank">Chapter 1 - Motion</a></li>
+        <li><a href="https://drive.google.com/file/d/1t_KoRDTGQbZLgRfE6cwGgOG-fj3AdUCo/view" target="_blank">Chapter 2 - Force and Laws of Motion</a></li>
+        <li><a href="https://drive.google.com/file/d/1x4gWSU64v2oXlCmFo_6_mnMboJS2FZ8Y/view" target="_blank">Chapter 3 - Gravitation</a></li>
       </ul>
-    </section>
+    </details>
+
+    <details>
+      <summary><img src="https://img.icons8.com/color/48/chemistry.png" alt="Chemistry"> Chemistry</summary>
+      <ul>
+        <li><a href="#">Chapter 1 - Some Basic Concepts of Chemistry</a></li>
+        <li><a href="#">Chapter 2 - Structure of Atom</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary><img src="https://img.icons8.com/color/48/language.png" alt="English"> English</summary>
+      <ul>
+        <li><a href="#">Chapter 1 - The Portrait of a Lady</a></li>
+        <li><a href="#">Chapter 2 - We're Not Afraid to Die...</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary><img src="https://img.icons8.com/color/48/calculator.png" alt="Maths"> Mathematics</summary>
+      <ul>
+        <li><a href="#">Chapter 1 - Sets</a></li>
+        <li><a href="#">Chapter 2 - Relations and Functions</a></li>
+      </ul>
+    </details>
+
+    <details>
+      <summary><img src="https://img.icons8.com/color/48/laptop-coding.png" alt="CS"> Computer Science</summary>
+      <ul>
+        <li><a href="#">Chapter 1 - Basics of Python</a></li>
+        <li><a href="#">Chapter 2 - Flow of Control</a></li>
+      </ul>
+    </details>
   </main>
 </body>
 </html>
