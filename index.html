@@ -150,28 +150,11 @@
       <div class="class-section">
         <h2 onclick="toggleSection('class-11A-subjects')" style="cursor:pointer">11A ⌄</h2>
         <ul class="ppt-list" id="class-11A-subjects">
-          <li>
-            <strong onclick="toggleSection('class-11A-Physics')" style="cursor:pointer; display:block;">Physics ⌄</strong>
-            <ul class="ppt-list" id="class-11A-Physics"></ul>
-          </li>
-          <li>
-            <strong onclick="toggleSection('class-11A-Chemistry')" style="cursor:pointer; display:block;">Chemistry ⌄</strong>
-            <ul class="ppt-list" id="class-11A-Chemistry"></ul>
-          </li>
-          <li>
-            <strong onclick="toggleSection('class-11A-Mathematics')" style="cursor:pointer; display:block;">Mathematics ⌄</strong>
-            <ul class="ppt-list" id="class-11A-Mathematics"></ul>
-          </li>
-          <li>
-            <strong onclick="toggleSection('class-11A-Computer Science')" style="cursor:pointer; display:block;">Computer Science ⌄</strong>
-            <ul class="ppt-list" id="class-11A-Computer Science"></ul>
-          </li>
-          <li>
-            <strong onclick="toggleSection('class-11A-English')" style="cursor:pointer; display:block;">English ⌄</strong>
-            <ul class="ppt-list" id="class-11A-English"></ul>
-          </li>
-        </ul>
-          </li>
+          <li><strong onclick="toggleSection('class-11A-Physics')" style="cursor:pointer; display:block;">Physics ⌄</strong><ul class="ppt-list" id="class-11A-Physics"></ul></li>
+          <li><strong onclick="toggleSection('class-11A-Chemistry')" style="cursor:pointer; display:block;">Chemistry ⌄</strong><ul class="ppt-list" id="class-11A-Chemistry"></ul></li>
+          <li><strong onclick="toggleSection('class-11A-Mathematics')" style="cursor:pointer; display:block;">Mathematics ⌄</strong><ul class="ppt-list" id="class-11A-Mathematics"></ul></li>
+          <li><strong onclick="toggleSection('class-11A-Computer Science')" style="cursor:pointer; display:block;">Computer Science ⌄</strong><ul class="ppt-list" id="class-11A-Computer Science"></ul></li>
+          <li><strong onclick="toggleSection('class-11A-English')" style="cursor:pointer; display:block;">English ⌄</strong><ul class="ppt-list" id="class-11A-English"></ul></li>
         </ul>
       </div>
       <div class="class-section">
@@ -182,6 +165,11 @@
     <iframe id="ppt-preview" src="" allowfullscreen></iframe>
   </div>
   <script>
+    function toggleSection(id) {
+      const ul = document.getElementById(id);
+      ul.style.display = ul.style.display === 'none' ? 'block' : 'none';
+    }
+
     const subjectIcons = {
       "Physics": "🔭",
       "Chemistry": "🧪",
@@ -215,56 +203,52 @@
         }
 
         const fileGroups = {
-  "11A": {
-    "Physics": {},
-    "Chemistry": {},
-    "Mathematics": {},
-    "Computer Science": {},
-    "English": {}
-  },
-  "11B": {}
-};
+          "11A": {
+            "Physics": {},
+            "Chemistry": {},
+            "Mathematics": {},
+            "Computer Science": {},
+            "English": {}
+          },
+          "11B": {}
+        };
 
         data.files.forEach(file => {
-  const lowerName = file.name.toLowerCase();
-  Object.entries(subjects).forEach(([cls, list]) => {
-    list.forEach(subject => {
-      if (lowerName.includes(subject.toLowerCase())) {
-        fileGroups[cls][subject] = fileGroups[cls][subject] || {};
-        fileGroups[cls][subject][file.name] = file.id;
-      }
-    });
-  });
-});
-          });
-        });
+          const lowerName = file.name.toLowerCase();
+          Object.entries(subjects).forEach(([cls, list]) => {
+            list.forEach(subject => {
+              if (lowerName.includes(subject.toLowerCase())) {
+                fileGroups[cls][subject] = fileGroups[cls][subject] || {};
+                fileGroups[cls][subject][file.name] = file.id;
+              }
+            });
           });
         });
 
         Object.entries(fileGroups).forEach(([cls, files]) => {
           if (cls === "11A") {
-  Object.entries(files).forEach(([subject, filesBySubject]) => {
-    const ul = document.getElementById(`class-11A-${subject}`);
-    Object.entries(filesBySubject).forEach(([name, id]) => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.innerHTML = `<span class='icon'>${subjectIcons[subject] || "📄"}</span> ${name}`;
-      a.href = "#";
-      a.setAttribute("data-name", name.toLowerCase());
-      a.onclick = () => {
-        preview.src = `https://drive.google.com/file/d/${id}/preview`;
-        document.querySelectorAll('.ppt-list a').forEach(el => el.style.backgroundColor = '');
-        a.style.backgroundColor = 'var(--active)';
-        return false;
-      };
-      li.appendChild(a);
-      ul.appendChild(li);
-      allLinks.push(a);
-    });
-  });
-} else {
+            Object.entries(files).forEach(([subject, filesBySubject]) => {
+              const ul = document.getElementById(`class-11A-${subject}`);
+              Object.entries(filesBySubject).forEach(([name, id]) => {
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                a.innerHTML = `<span class='icon'>${subjectIcons[subject] || "📄"}</span> ${name}`;
+                a.href = "#";
+                a.setAttribute("data-name", name.toLowerCase());
+                a.onclick = () => {
+                  preview.src = `https://drive.google.com/file/d/${id}/preview`;
+                  document.querySelectorAll('.ppt-list a').forEach(el => el.style.backgroundColor = '');
+                  a.style.backgroundColor = 'var(--active)';
+                  return false;
+                };
+                li.appendChild(a);
+                ul.appendChild(li);
+                allLinks.push(a);
+              });
+            });
+          } else {
             const ul = document.getElementById(`class-${cls}-subjects`);
-            Object.entries(files).forEach(([name, id], i) => {
+            Object.entries(files).forEach(([name, id]) => {
               const li = document.createElement("li");
               const a = document.createElement("a");
               a.innerHTML = `<span class='icon'>📄</span> ${name}`;
@@ -282,7 +266,6 @@
             });
           }
         });
-        });
       })
       .catch(err => {
         document.body.innerHTML += `<p>Error loading files: ${err.message}</p>`;
@@ -295,10 +278,6 @@
         link.parentElement.style.display = match ? "flex" : "none";
       });
     }
-  function toggleSection(id) {
-  const ul = document.getElementById(id);
-  ul.style.display = ul.style.display === 'none' ? 'block' : 'none';
-}
-</script>
+  </script>
 </body>
 </html>
