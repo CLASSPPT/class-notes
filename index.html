@@ -149,7 +149,12 @@
       </div>
       <div class="class-section">
         <h2 onclick="toggleSection('class-11A-subjects')" style="cursor:pointer">11A ⌄</h2>
-        <ul class="ppt-list" id="class-11A-subjects"></ul>
+        <ul class="ppt-list" id="class-11A-subjects">
+          <li>
+            <strong onclick="toggleSection('class-11A-physics')" style="cursor:pointer; display:block;">Physics ⌄</strong>
+            <ul class="ppt-list" id="class-11A-physics"></ul>
+          </li>
+        </ul>
       </div>
       <div class="class-section">
         <h2 onclick="toggleSection('class-11B-subjects')" style="cursor:pointer">11B ⌄</h2>
@@ -191,43 +196,82 @@
           return;
         }
 
-        const fileGroups = { "11A": {}, "11B": {} };
+        const fileGroups = { "11A": { "Physics": {}, "Other": {} }, "11B": {} };
 
         data.files.forEach(file => {
           const lowerName = file.name.toLowerCase();
           Object.entries(subjects).forEach(([cls, list]) => {
-            list.forEach(subject => {
-              if (lowerName.includes(subject.toLowerCase())) {
-                fileGroups[cls][file.name] = file.id;
+          list.forEach(subject => {
+            data.files.forEach(file => {
+              const lowerName = file.name.toLowerCase();
+              if (cls === "11A" && subject === "Physics" && lowerName.includes("physics")) {
+                fileGroups[cls]["Physics"][file.name] = file.id;
+              } else if (lowerName.includes(subject.toLowerCase())) {
+                fileGroups[cls]["Other"] = fileGroups[cls]["Other"] || {};
+                fileGroups[cls]["Other"][file.name] = file.id;
               }
             });
           });
         });
+          });
+        });
 
         Object.entries(fileGroups).forEach(([cls, files]) => {
-          const ul = document.getElementById(`class-${cls}-subjects`);
-          Object.entries(files).forEach(([name, id], i) => {
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-            const matchedSubject = subjects[cls].find(sub => name.toLowerCase().includes(sub.toLowerCase()));
-            a.innerHTML = `<span class='icon'>${subjectIcons[matchedSubject] || "📄"}</span> ${name}`;
-            a.href = "#";
-            a.setAttribute("data-name", name.toLowerCase());
-            a.onclick = () => {
-              preview.src = `https://drive.google.com/file/d/${id}/preview`;
-              document.querySelectorAll('.ppt-list a').forEach(el => el.style.backgroundColor = '');
-              a.style.backgroundColor = 'var(--active)';
-              return false;
-            };
-            li.appendChild(a);
-            ul.appendChild(li);
-            allLinks.push(a);
-
-            if (i === 0 && preview.src === "") {
-              preview.src = `https://drive.google.com/file/d/${id}/preview`;
-              a.style.backgroundColor = 'var(--active)';
-            }
-          });
+          if (cls === "11A") {
+            const physicsUl = document.getElementById("class-11A-physics");
+            const otherUl = document.getElementById("class-11A-subjects");
+            Object.entries(files["Physics"]).forEach(([name, id], i) => {
+              const li = document.createElement("li");
+              const a = document.createElement("a");
+              a.innerHTML = `<span class='icon'>🔭</span> ${name}`;
+              a.href = "#";
+              a.setAttribute("data-name", name.toLowerCase());
+              a.onclick = () => {
+                preview.src = `https://drive.google.com/file/d/${id}/preview`;
+                document.querySelectorAll('.ppt-list a').forEach(el => el.style.backgroundColor = '');
+                a.style.backgroundColor = 'var(--active)';
+                return false;
+              };
+              li.appendChild(a);
+              physicsUl.appendChild(li);
+              allLinks.push(a);
+            });
+            Object.entries(files["Other"]).forEach(([name, id], i) => {
+              const li = document.createElement("li");
+              const a = document.createElement("a");
+              a.innerHTML = `<span class='icon'>📄</span> ${name}`;
+              a.href = "#";
+              a.setAttribute("data-name", name.toLowerCase());
+              a.onclick = () => {
+                preview.src = `https://drive.google.com/file/d/${id}/preview`;
+                document.querySelectorAll('.ppt-list a').forEach(el => el.style.backgroundColor = '');
+                a.style.backgroundColor = 'var(--active)';
+                return false;
+              };
+              li.appendChild(a);
+              otherUl.appendChild(li);
+              allLinks.push(a);
+            });
+          } else {
+            const ul = document.getElementById(`class-${cls}-subjects`);
+            Object.entries(files).forEach(([name, id], i) => {
+              const li = document.createElement("li");
+              const a = document.createElement("a");
+              a.innerHTML = `<span class='icon'>📄</span> ${name}`;
+              a.href = "#";
+              a.setAttribute("data-name", name.toLowerCase());
+              a.onclick = () => {
+                preview.src = `https://drive.google.com/file/d/${id}/preview`;
+                document.querySelectorAll('.ppt-list a').forEach(el => el.style.backgroundColor = '');
+                a.style.backgroundColor = 'var(--active)';
+                return false;
+              };
+              li.appendChild(a);
+              ul.appendChild(li);
+              allLinks.push(a);
+            });
+          }
+        });
         });
       })
       .catch(err => {
