@@ -9,13 +9,22 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f0f2f5;
+      background: linear-gradient(to right, #f0f2f5, #e0f7fa);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body.dark {
+      background: linear-gradient(to right, #121212, #1f1f1f);
+      color: #f0f0f0;
     }
     header {
-      background-color: #005792;
+      background: linear-gradient(to right, #005792, #0095ff);
       color: white;
       padding: 1rem;
       text-align: center;
+      position: relative;
+    }
+    body.dark header {
+      background: linear-gradient(to right, #1e1e1e, #333333);
     }
     main {
       padding: 2rem;
@@ -25,7 +34,10 @@
       background-color: white;
       padding: 1rem;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    body.dark details {
+      background-color: #1e1e1e;
     }
     summary {
       font-size: 1.2rem;
@@ -35,9 +47,12 @@
       display: flex;
       align-items: center;
     }
+    body.dark summary {
+      color: #90caf9;
+    }
     summary img {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       margin-right: 10px;
     }
     ul {
@@ -52,57 +67,148 @@
       text-decoration: none;
       color: #005792;
     }
+    body.dark a {
+      color: #90caf9;
+    }
     a:hover {
       text-decoration: underline;
+    }
+    .toggle-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "🌞";
+      height: 26px;
+      width: 26px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    input:checked + .slider:before {
+      content: "🌙";
+      transform: translateX(30px);
     }
   </style>
 </head>
 <body>
   <header>
     <h1>📚 Class 11A PPT Sharing Portal</h1>
-    <p>Access all class presentations by subject</p>
+    <p>Get all your subject notes organised</p>
+    <div class="toggle-container">
+      <label class="toggle-switch">
+        <input type="checkbox" id="theme-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
   </header>
   <main>
     <details>
-      <summary><img src="https://img.icons8.com/color/48/physics.png" alt="Physics"> Physics</summary>
-      <ul>
-        <li><a href="https://drive.google.com/file/d/1r8uQLuh3Nlv8g9Yv7QBoH6xgZpbp0wbP/view" target="_blank">Chapter 1 - Motion</a></li>
-        <li><a href="https://drive.google.com/file/d/1t_KoRDTGQbZLgRfE6cwGgOG-fj3AdUCo/view" target="_blank">Chapter 2 - Force and Laws of Motion</a></li>
-        <li><a href="https://drive.google.com/file/d/1x4gWSU64v2oXlCmFo_6_mnMboJS2FZ8Y/view" target="_blank">Chapter 3 - Gravitation</a></li>
-      </ul>
+      <summary><img src="https://img.icons8.com/doodle/48/physics.png" alt="Physics"> Physics</summary>
+      <ul id="physics-list"></ul>
     </details>
 
     <details>
-      <summary><img src="https://img.icons8.com/color/48/chemistry.png" alt="Chemistry"> Chemistry</summary>
-      <ul>
-        <li><a href="#">Chapter 1 - Some Basic Concepts of Chemistry</a></li>
-        <li><a href="#">Chapter 2 - Structure of Atom</a></li>
-      </ul>
+      <summary><img src="https://img.icons8.com/doodle/48/chemistry.png" alt="Chemistry"> Chemistry</summary>
+      <ul id="chemistry-list"></ul>
     </details>
 
     <details>
-      <summary><img src="https://img.icons8.com/color/48/language.png" alt="English"> English</summary>
-      <ul>
-        <li><a href="#">Chapter 1 - The Portrait of a Lady</a></li>
-        <li><a href="#">Chapter 2 - We're Not Afraid to Die...</a></li>
-      </ul>
+      <summary><img src="https://img.icons8.com/doodle/48/math.png" alt="Maths"> Mathematics</summary>
+      <ul id="math-list"></ul>
     </details>
 
     <details>
-      <summary><img src="https://img.icons8.com/color/48/calculator.png" alt="Maths"> Mathematics</summary>
-      <ul>
-        <li><a href="#">Chapter 1 - Sets</a></li>
-        <li><a href="#">Chapter 2 - Relations and Functions</a></li>
-      </ul>
+      <summary><img src="https://img.icons8.com/doodle/48/laptop-coding.png" alt="CS"> Computer Science</summary>
+      <ul id="cs-list"></ul>
     </details>
 
     <details>
-      <summary><img src="https://img.icons8.com/color/48/laptop-coding.png" alt="CS"> Computer Science</summary>
-      <ul>
-        <li><a href="#">Chapter 1 - Basics of Python</a></li>
-        <li><a href="#">Chapter 2 - Flow of Control</a></li>
-      </ul>
+      <summary><img src="https://img.icons8.com/doodle/48/book-shelf.png" alt="English"> English</summary>
+      <ul id="english-list"></ul>
     </details>
   </main>
+
+  <script>
+    const folderId = "1YPr1oX6qz80TRTdSKTSdmtaMUUKfuhI7";
+    const apiKey = "AIzaSyB6svQmnmyUojMt5ndeK-nNnyv1sbHJF6w";
+
+    const subjectMap = {
+      physics: "physics-list",
+      chemistry: "chemistry-list",
+      math: "math-list",
+      mathematics: "math-list",
+      english: "english-list",
+      computer: "cs-list",
+      cs: "cs-list"
+    };
+
+    const query = `'${folderId}' in parents and trashed = false`;
+    const url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&key=${apiKey}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        data.files.forEach(file => {
+          const name = file.name.toLowerCase();
+          for (const key in subjectMap) {
+            if (name.includes(key)) {
+              const ul = document.getElementById(subjectMap[key]);
+              if (ul) {
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                a.href = `https://drive.google.com/file/d/${file.id}/view`;
+                a.textContent = file.name;
+                li.appendChild(a);
+                ul.appendChild(li);
+                break;
+              }
+            }
+          }
+        });
+      })
+      .catch(err => console.error("Error fetching files:", err));
+
+    // Dark mode toggle
+    const toggle = document.getElementById("theme-toggle");
+    toggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark");
+    });
+  </script>
 </body>
 </html>
